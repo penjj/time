@@ -1,0 +1,66 @@
+<style lang="stylus">
+.container 
+  height 100%
+  display flex
+  flex-direction column
+  align-items center
+  justify-content space-between
+  box-sizing border-box
+
+</style>
+
+<script>
+import wepy from 'wepy'
+import 'wepy-async-function'
+
+export default class extends wepy.app {
+  config = {
+    pages: [
+      'pages/index',
+      'pages/movie-detail',
+      'pages/user'
+    ],
+    window: {
+      backgroundTextStyle: 'light',
+      navigationBarBackgroundColor: '#009687',
+      navigationBarTitleText: 'WeChat',
+      navigationBarTextStyle: 'white'
+    },
+    tabBar: {
+      color: '#ddd',
+      selectedColor: 'white',
+      backgroundColor: '#009687',
+      list: [
+        {
+          pagePath: 'pages/index',
+          text: '电影'
+        },
+        {
+          pagePath: 'pages/user',
+          text: '我的'
+        }
+      ]
+    }
+  }
+  globalData = {
+    userInfo: null,
+    location: 290
+  }
+  constructor () {
+    super()
+    this.use('requestfix')
+    this.use('promisify')
+  }
+  onLaunch() {
+    this.getLocation()
+  }
+  getLocation () {
+    wepy.getLocation()
+      .then(() => {
+        this.globalData.location = 598
+      }).catch(() => {
+        this.globalData.location = 298
+      })
+  }
+}
+</script>

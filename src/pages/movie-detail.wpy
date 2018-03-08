@@ -1,0 +1,33 @@
+<style lang="stylus" scoped>
+</style>
+
+<template>
+  <view class="movie-detail">
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy'
+import toast from 'mixins/toast'
+import movieDetail from 'api/movie-detail'
+
+export default class MovieDetail extends wepy.page {
+  onLoad (option) {
+    this.getMovieDetail(option)
+    this.showToast()
+  }
+  mixins = [
+    toast
+  ]
+  data = {
+    movieDetail: null
+  }
+  getMovieDetail (option) {
+    movieDetail(option).then((data) => {
+      this.movieDetail = data
+      this.hideToast()
+      console.log(data)
+    })
+  }
+}
+</script>

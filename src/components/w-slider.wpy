@@ -1,0 +1,42 @@
+<style lang="stylus" scoped>
+  .swiper
+    .item
+      overflow hidden
+      .img
+        width 100%
+        height 900rpx
+</style>
+
+<template>
+  <swiper class="swiper"
+    indicator-dots="true"
+    indicator-color="rgb(255,255,255)"
+    indicator-active-color="#009687"
+    autoplay="true"
+    interval="5000"
+  >
+    <block class="box" wx:for="{{imgArr}}" wx:key="index">
+      <swiper-item class="item">
+        <image class="img" src="{{item.img}}"></image>
+      </swiper-item>
+    </block>
+  </swiper>
+</template>
+
+<script>
+import wepy from 'wepy'
+export default class WSlider extends wepy.component {
+  onLoad () {
+  }
+  props = {
+    imgArr: {
+      type: Array,
+      default: []
+    }
+  }
+  watch = {
+    $parent (newData, oldData) {
+    }
+  }
+}
+</script>

@@ -1,0 +1,129 @@
+<style lang="stylus" scoped>
+  @import '../stylus/mixin.styl'
+  .type
+    width 100%
+    height 80rpx
+    $border-1px(rgba(7, 17, 27, 0.1), true)
+    position fixed
+    z-index 999
+    top 0
+    background #009687
+    .item
+      width 40%
+      margin 0 auto
+      display flex
+      .txt-1, .txt-2
+        position relative
+        flex 0 0 80rpx
+        margin 0 auto
+        padding 0 40rpx
+        display block
+        text-align center
+        line-height 75rpx
+        font-size 12px
+        color #fff
+        transition color .4s
+        &:before
+          content ''
+          display block
+          position absolute
+          bottom 0
+          height 2px
+          width 80rpx
+          transition transform .4s .3s
+        &.active
+          color #000
+          &:before
+            background #000
+            transform translate(0, 0)
+      .txt-1
+        &:before
+          transform translate(160rpx, 0)
+      .txt-2
+        &:before
+          transform translate(-160rpx, 0)
+  .slider
+    margin-top 30px
+    $border-1px(rgba(7, 17, 27, 0.1), false)
+</style>
+<template>
+  <view class="type">
+    <view class="item">
+      <text class="txt-1 {{active ? 'active' : ''}}"
+        @tap="toggleType({{true}})"
+      >热映</text>
+      <text class="txt-2 {{active ? '' : 'active'}}"
+        @tap="toggleType({{false}})"
+      >待映</text>
+    </view>
+  </view>
+  <view class="slider">
+    <wslider wx:if="{{sliderImg}}" :imgArr.sync="sliderImg"></wslider>
+  </view>
+  <view class="movie" wx:if="{{hot}}">
+    <repeat for="{{hot}}" key="index" index="index" item="item">
+      <movie :movie.sync="item"></movie>
+    </repeat>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import hot from 'api/hot'
+  import wslider from 'components/w-slider'
+  import movie from 'components/movie'
+  import parserData from 'common/parser'
+  import toast from 'mixins/toast'
+
+  export default class Index extends wepy.page {
+    config = {
+      navigationBarTitleText: '电影资讯'
+    }
+    onLoad () {
+      this.showToast()
+      this.getHot(this.$parent.globalData.location)
+    }
+    mixins = [
+      toast
+    ]
+    components = {
+      wslider,
+      movie
+    }
+    getHot (id) {
+      hot(id).then((data) => {
+        this.hot = parserData(data.ms)
+        this.getSliderImg(data.ms)
+        this.$apply()
+        console.log(this.hot)
+        this.hideToast()
+      })
+    }
+    getSliderImg (data) {
+      this.sliderImg = data.slice(0, 10)
+      this.$apply()
+    }
+    movieDetail (id) {
+      console.log(id)
+    }
+    events = {
+      'showMovieDetail': (id) => {
+        wepy.navigateTo({
+          url: `./movie-detail?locationId=${this.$parent.globalData.location}&movieId=${id}`
+        })
+      }
+    }
+    computed = {
+    }
+    data = {
+      hot: null,
+      sliderImg: null,
+      active: true
+    }
+    methods = {
+      toggleType (flag) {
+        this.active = flag
+      }
+    }
+  }
+</script>

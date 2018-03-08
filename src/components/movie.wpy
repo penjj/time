@@ -1,0 +1,109 @@
+<style lang="stylus" scoped>
+@import '../stylus/mixin.styl'
+.movie
+  display flex
+  padding 20rpx
+  $border-1px(rgba(7, 17, 27, 0.1), false)
+  &.hover
+    background rgba(7, 17, 27, 0.1)
+  .movie-img
+    flex 0 0 50px
+    .img
+      width 50px
+      height 80px
+  .movie-info
+    flex 1
+    padding 0 10px
+    display flex
+    flex-direction column
+    $ellipsis()
+    .title-wrapper
+      width 85%
+      display flex
+      .title
+        font-size 15px
+        margin-right  6px
+      .is-3d, .is-imax, .is-imax3d
+        display block
+        margin auto 2px
+        padding 2px 2px 0 2px
+        line-height 9px
+        border 1px solid #009687
+        font-size 7px
+        color #fff
+        background #009687
+      .is-imax3d
+        padding 0
+        .icon-1, .icon-2
+          display inline-block
+          padding 2px 2px 0 2px
+        .icon-2
+          color #009687
+          background #fff
+    .type, .actors
+      margin 2px 0
+      font-size 12px
+      color #555
+    .release-date
+      font-size 12px
+      color #888
+  .operation
+    position relative
+    flex 0 0 40px
+    .wanted-count
+      position absolute
+      margin-top -2px
+      width 80px
+      right 0
+      text-align right
+      .count
+        font-size 10px
+        color #777
+        .txt
+          color #009687
+          font-size 14px
+</style>
+
+<template>
+  <view class="movie" hover-class="hover" movieId="{{movie.movieId}}" @tap="showMovieDetail">
+    <view class="movie-img">
+      <image class="img" src="{{movie.img}}"></image>
+    </view>
+    <view class="movie-info">
+      <view class="title-wrapper">
+        <text class="title ellipsis">{{movie.title}}</text>
+        <text wx:if="{{movie.is3D & !movie.isIMAX3D}}" class="is-3d">3D</text>
+        <text wx:if="{{movie.isIMAX & !movie.isIMAX3D}}" class="is-imax">IMAX</text>
+        <text wx:if="{{movie.isIMAX3D}}" class="is-imax3d">
+          <text class="icon-1">3D</text>
+          <text class="icon-2">IMAX</text>
+        </text>
+      </view>  
+      <text class="type ellipsis">{{movie.type}}</text>
+      <text class="actors ellipsis">{{movie.actors}}</text>
+      <text class="release-date ellipsis">{{movie.releaseDate}}</text>
+    </view>
+    <view class="operation">
+      <view class="wanted-count">
+        <text class="count"><text class="txt">{{movie.wantedCount}}</text>人想看</text>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy'
+
+export default class Movie extends wepy.component {
+  props = {
+    movie: {
+      type: Object
+    }
+  }
+  methods = {
+    showMovieDetail () {
+      this.$emit('showMovieDetail', this.movie.movieId)
+    }
+  }
+}
+</script>
