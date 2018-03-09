@@ -1,8 +1,219 @@
 <style lang="stylus" scoped>
+  @import '../stylus/mixin.styl'
+  .movie-detail
+    .header
+      width 100%
+      height 350rpx
+      $border-1px(rgba(7, 17, 27, 0.1), false)
+      overflow hidden
+      .blur
+        position absolute
+        height 350rpx
+        width 100%
+        background-repeat no-repeat
+        background-size cover
+        filter blur(20px)
+        z-index -1
+        &:after
+          content ''
+          display block
+          position absolute
+          height 350rpx
+          width 100%
+          background rgba(0, 0, 0, 0.4)
+      .info-wrapper
+        height 100%
+        top 0
+        overflow hidden
+        display flex
+        padding 24rpx 24rpx
+        .pic
+          flex 0 0 200rpx
+          .img
+            border 1px solid #aaa
+            width 210rpx
+            height 300rpx
+        .info
+          flex 1
+          padding-left 8px
+          .name, .name-en, .rating
+            color #eee
+          .name-en
+            font-size 10px
+          .rating
+            font-size 11px
+            margin-top 8px
+            .txt
+              font-size 14px
+              color #009687
+          .type
+            margin-top 4px
+            .movie-type
+              font-size 11px
+              margin-right 4px
+              color #aaa
+          .release
+            margin-top 8px
+            font-size 11px
+            color #aaa
+          .icon
+            margin-top 8px
+            display flex
+            .is-3d, .is-imax
+              $icon-3d()
+            .is-imax3d
+              $icon-imax3d()
+  .desc
+    padding 24rpx
+    padding-bottom 0
+    line-height 20px
+    font-size 13px
+    .txt
+      max-height 1500px
+      transition all .4s
+      &.hide
+        max-height 60px
+        overflow hidden
+    .switch
+      line-height 30px
+      text-align center
+  .actors
+    .title
+      $title()
+    .scroll-view
+      height 260rpx
+      .actors-wrapper
+        display flex
+        padding-left 24rpx
+        .actor-item
+          padding-right 24rpx
+          width 180rpx
+          height 260rpx
+          .pic
+            width 140rpx
+            height 180rpx
+          .info
+            width 140rpx
+            text-align center
+            $ellipsis()
+            .name, .role-name
+              font-size 10px
+  .box-office
+    .title
+      $title()
+    .box-office-wrapper
+      width 100%
+      display flex
+      .ranking, .today-box, .total-box
+        flex 1
+        display flex
+        flex-direction column
+        text-align center
+        .count
+          font-size 20px
+        .desc
+          font-size 11px
 </style>
 
 <template>
-  <view class="movie-detail">
+  <view class="movie-detail" wx:if="{{detail}}">
+    <view class="header">
+      <view class="blur" style="background-image: url({{detail.basic.img}})"></view>
+      <view class="info-wrapper">
+        <view class="pic">
+          <image class="img" src="{{detail.basic.img}}"></image>
+        </view>
+        <view class="info">
+          <view class="name">
+            <text>{{detail.basic.name}}</text>
+          </view>
+          <view class="name-en">
+            <text>{{detail.basic.nameEn}}</text>
+          </view>
+          <view class="rating" wx:if="{{detail.basic.overallRating > 0}}">
+            <text>评分：<text class="txt">{{detail.basic.overallRating}}</text></text>
+          </view>
+          <view class="type">
+            <text class="movie-type">{{movieType}}</text>
+          </view>
+          <view class="release">
+            <text class="release">{{date}}</text>
+          </view>
+          <view class="icon">
+            <text class="is-3d" wx:if="{{detail.basic.is3D}}">3D</text>
+            <text class="is-imax" wx:if="{{detail.basic.isIMAX}}">IMAX</text>
+            <text class="is-imax3d" wx:if="{{detail.basic.isIMAX3D}}">
+              <text class="icon-1">3D</text>
+              <text class="icon-2">IMAX</text>
+            </text>
+          </view>
+        </view>
+      </view>
+    </view>
+    <view class="desc" @tap="showMore">
+      <view class="txt {{showMoreFlag ? '' : 'hide'}}">
+        <text><text>{{detail.basic.story}}</text></text>
+      </view>
+      <view class="switch">
+        <text class="icon">w</text>
+      </view>
+    </view>
+    <well></well>
+    <view class="actors">
+      <text class="title">演职员表</text>
+      <scroll-view class="scroll-view"
+        scroll-x="true"
+        lower-threshold="0"
+        upper-threshold="400"
+        enable-back-to-top="true"
+      >
+        <view class="actors-wrapper">
+          <view class="actor-item">
+            <image class="pic" src="{{detail.basic.director.img}}"></image>
+            <view class="info">
+              <view class="name ellipsis">
+                <text class="txt">{{detail.basic.director.name || detail.basic.director.nameEn}}</text>
+              </view>
+              <view class="role-name ellipsis">
+                <text class="txt">导演</text>
+              </view>
+            </view>
+          </view>
+          <repeat for="{{detail.basic.actors}}" item="item" key="key" wx:if="{{detail.basic.actors.length}}">
+            <view class="actor-item">
+              <image class="pic" src="{{item.img}}"></image>
+              <view class="info">
+                <view class="name ellipsis">
+                  <text class="txt">{{item.name || item.nameEn}}</text>
+                </view>
+                <view class="role-name ellipsis">
+                  <text class="txt">{{item.roleName}}</text>
+                </view>
+              </view>
+            </view>
+          </repeat>
+        </view>
+      </scroll-view>
+      <well></well>
+    </view>
+    <view class="box-office">
+      <text class="title">票房</text>
+      <view class="box-office-wrapper">
+        <view class="ranking">
+          <text class="count">{{detail.boxOffice.ranking}}</text>
+          <text class="desc">票房排行</text>
+        </view>
+        <view class="today-box">
+          <text class="count">{{detail.boxOffice.todayBoxDes}}</text>
+          <text class="desc">今日实时(万)</text>
+        </view>
+        <view class="total-box">
+          <text class="count">{{detail.boxOffice.totalBoxDes}}</text>
+          <text class="desc">累计票房(万)</text>
+        </view>
+      </view>
+      <well></well>
+    </view>
   </view>
 </template>
 
@@ -10,8 +221,13 @@
 import wepy from 'wepy'
 import toast from 'mixins/toast'
 import movieDetail from 'api/movie-detail'
+import well from 'components/well'
+import {parser} from 'common/parser'
 
 export default class MovieDetail extends wepy.page {
+  config = {
+    navigationBarTitleText: '影片详情'
+  }
   onLoad (option) {
     this.getMovieDetail(option)
     this.showToast()
@@ -20,14 +236,35 @@ export default class MovieDetail extends wepy.page {
     toast
   ]
   data = {
-    movieDetail: null
+    detail: null,
+    showMoreFlag: false
   }
   getMovieDetail (option) {
     movieDetail(option).then((data) => {
-      this.movieDetail = data
+      this.detail = data
+      this.$apply()
       this.hideToast()
       console.log(data)
     })
+  }
+  methods = {
+    showMore () {
+      this.showMoreFlag = !this.showMoreFlag
+    }
+  }
+  computed = {
+    movieType () {
+      return this.detail && this.detail.basic.type.join('/')
+    },
+    date () {
+      if (this.detail) {
+        let releaseDate = parser(this.detail.basic.releaseDate)
+        return `${releaseDate[0]}年${releaseDate[1]}月${releaseDate[2]}日${this.detail.basic.releaseArea}上映`
+      }
+    }
+  }
+  components = {
+    well
   }
 }
 </script>

@@ -23,23 +23,10 @@
       .title
         font-size 15px
         margin-right  6px
-      .is-3d, .is-imax, .is-imax3d
-        display block
-        margin auto 2px
-        padding 2px 2px 0 2px
-        line-height 9px
-        border 1px solid #009687
-        font-size 7px
-        color #fff
-        background #009687
+      .is-3d, .is-imax
+        $icon-3d()
       .is-imax3d
-        padding 0
-        .icon-1, .icon-2
-          display inline-block
-          padding 2px 2px 0 2px
-        .icon-2
-          color #009687
-          background #fff
+        $icon-imax3d()
     .type, .actors
       margin 2px 0
       font-size 12px

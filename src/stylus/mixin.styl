@@ -15,6 +15,10 @@ $border-1px($color, top)
     else 
       bottom 0
 
+$title()
+  padding-left 24rpx
+  font-size 13px
+  line-height 25px
 
 // 需要显示省略的的元素需要有 ellipsis class
 $ellipsis()
@@ -23,3 +27,28 @@ $ellipsis()
     text-overflow ellipsis
     white-space nowrap
     overflow hidden
+
+$icon-3d()
+  display block
+  margin auto 2px
+  padding 2px 2px 0 2px
+  line-height 9px
+  border 1px solid #009687
+  font-size 7px
+  color #fff
+  background #009687
+
+$icon-imax3d()
+  display: block
+  margin: auto 2px
+  border 1px solid #009687
+  font-size 7px
+  color #fff
+  background #009687
+  line-height: 9px
+  .icon-1, .icon-2
+    display inline-block
+    padding 2px 2px 0 2px
+  .icon-2
+    color #009687
+    background #fff

@@ -80,6 +80,9 @@
       navigationBarTitleText: '电影资讯'
     }
     onLoad () {
+      wepy.navigateTo({
+        url: `./movie-detail?locationId=${this.$parent.globalData.location}&movieId=${218085}`
+      })
       this.showToast()
       this.getHot(this.$parent.globalData.location)
     }
@@ -96,15 +99,15 @@
         this.getSliderImg(data.ms)
         this.$apply()
         console.log(this.hot)
+        // wepy.navigateTo({
+        //   url: `./movie-detail?locationId=${this.$parent.globalData.location}&movieId=${218085}`
+        // })
         this.hideToast()
       })
     }
     getSliderImg (data) {
       this.sliderImg = data.slice(0, 10)
       this.$apply()
-    }
-    movieDetail (id) {
-      console.log(id)
     }
     events = {
       'showMovieDetail': (id) => {

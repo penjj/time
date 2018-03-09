@@ -1,0 +1,26 @@
+<style lang="stylus" scoped>
+@import '../stylus/mixin.styl'
+  .well, .border-top, .border-bottom
+    height 16rpx
+    width 100%
+    background #eee
+  .well
+    height 31rpx
+    .border-top
+      $border-1px(rgba(7, 17, 27, 0.1), true)
+    .border-bottom
+      $border-1px(rgba(7, 17, 27, 0.1), false)
+</style>
+
+<template>
+  <view class="well">
+    <view class="border-top"></view>
+    <view class="border-bottom"></view>
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy'
+export default class Well extends wepy.component {
+}
+</script>

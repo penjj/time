@@ -1,9 +1,9 @@
-function parser (str) {
+export function parser (str) {
   if (typeof str !== 'string') return
   if (/\d{8}/.test(str)) {
     const newN = str.split(/(\d{4})(\d{2})/)
     newN.shift()
-    return newN.join('-')
+    return newN
   } else {
     return str.split(' / ').join(',')
   }
@@ -16,7 +16,7 @@ export default function parserData (data) {
       title: item.t,
       type: parser(item.movieType),
       actors: parser(item.actors),
-      releaseDate: parser(item.rd),
+      releaseDate: parser(item.rd).join('-'),
       img: item.img,
       wantedCount: item.wantedCount,
       is3D: item.is3D,
