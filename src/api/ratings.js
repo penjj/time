@@ -1,19 +1,18 @@
 import wepy from 'wepy'
 
-const url = 'https://api-m.mtime.cn/Movie/MovieComingNew.api'
+const url = 'http://m.mtime.cn/Service/callback.mi/Showtime/MovieComments.api'
 
-export default function movieComingNew (locationId) {
+export default function ratings (movieId, pageIndex = 1) {
   return new Promise((resolve) => {
     wepy.request({
       url,
       data: {
-        locationId
+        pageIndex,
+        movieId
       }
     }).then((data) => {
       if (data.statusCode === 200) {
-        resolve({
-          ms: data.data.attention.concat(data.data.moviecomings)
-        })
+        resolve(data.data)
       } else {
         console.log(data)
       }

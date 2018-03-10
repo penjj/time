@@ -1,5 +1,6 @@
 <style lang="stylus" scoped>
   @import '../stylus/mixin.styl'
+  @import '../stylus/fonts/icon.styl'
   .movie-detail
     .header
       width 100%
@@ -102,17 +103,46 @@
     .title
       $title()
     .box-office-wrapper
-      width 100%
       display flex
+      width 100%
+      padding-top 12rpx
       .ranking, .today-box, .total-box
         flex 1
-        display flex
-        flex-direction column
         text-align center
+        color #999
+        .count, .desc
+          display block
         .count
           font-size 20px
+          color #009687
         .desc
+          box-sizing border-box
+          height 20px
+          margin-bottom 24rpx
+          line-height 0
           font-size 11px
+  .state-img
+    .title
+      $title()
+    .well
+      margin-top 24rpx
+    .state-item
+      padding-left 24rpx
+      display flex
+      .state-img-wrapper
+        flex 0
+        padding-right 24rpx
+        width 200rpx
+        .img
+          width 200rpx
+          height 140rpx
+  .rating
+    .title
+      $title()
+    .no-rating
+      text-align center
+      line-height 30px
+      font-size 12px
 </style>
 
 <template>
@@ -155,18 +185,13 @@
         <text><text>{{detail.basic.story}}</text></text>
       </view>
       <view class="switch">
-        <text class="icon">w</text>
+        <text class="icon {{showMoreFlag ? 'icon-arrow-up' : 'icon-arrow-down'}}"></text>
       </view>
     </view>
     <well></well>
     <view class="actors">
       <text class="title">演职员表</text>
-      <scroll-view class="scroll-view"
-        scroll-x="true"
-        lower-threshold="0"
-        upper-threshold="400"
-        enable-back-to-top="true"
-      >
+      <scroll-view class="scroll-view" scroll-x="true">
         <view class="actors-wrapper">
           <view class="actor-item">
             <image class="pic" src="{{detail.basic.director.img}}"></image>
@@ -200,18 +225,41 @@
       <text class="title">票房</text>
       <view class="box-office-wrapper">
         <view class="ranking">
-          <text class="count">{{detail.boxOffice.ranking}}</text>
+          <text class="count">{{detail.boxOffice.ranking || '暂无'}}</text>
           <text class="desc">票房排行</text>
         </view>
         <view class="today-box">
-          <text class="count">{{detail.boxOffice.todayBoxDes}}</text>
+          <text class="count">{{detail.boxOffice.todayBoxDes || '暂无'}}</text>
           <text class="desc">今日实时(万)</text>
         </view>
         <view class="total-box">
-          <text class="count">{{detail.boxOffice.totalBoxDes}}</text>
+          <text class="count">{{detail.boxOffice.totalBoxDes || '暂无'}}</text>
           <text class="desc">累计票房(万)</text>
         </view>
       </view>
+      <well></well>
+    </view>
+    <view class="state-img">
+      <text class="title">剧照</text>
+      <scroll-view scroll-x="true">
+        <view class="state-item">
+          <repeat for="{{detail.basic.stageImg.list}}" key="index" item="item">
+            <view class="state-img-wrapper">
+              <image class="img" src="{{item.imgUrl}}"></image>
+            </view>
+          </repeat>
+        </view>
+      </scroll-view>
+      <well class="well"></well>
+    </view>
+    <view class="rating" wx:if="{{ratings}}">
+      <text class="title">短评({{ratings.totalCount}})</text>
+      <view class="no-rating" wx:if="{{!ratings.cts}}">
+        <text class="txt">暂无评论</text>
+      </view>
+      <repeat for="{{ratings.cts}}" index="index" key="index" item="item">
+        <rating :rating.sync="item"></rating>
+      </repeat>
       <well></well>
     </view>
   </view>
@@ -221,15 +269,20 @@
 import wepy from 'wepy'
 import toast from 'mixins/toast'
 import movieDetail from 'api/movie-detail'
+import ratings from 'api/ratings'
 import well from 'components/well'
+import rating from 'components/rating'
 import {parser} from 'common/parser'
+import getFormatTime from 'common/time'
 
 export default class MovieDetail extends wepy.page {
   config = {
     navigationBarTitleText: '影片详情'
   }
   onLoad (option) {
-    this.getMovieDetail(option)
+    this.option = option
+    this.getMovieDetail()
+    this.getRatings()
     this.showToast()
   }
   mixins = [
@@ -237,15 +290,48 @@ export default class MovieDetail extends wepy.page {
   ]
   data = {
     detail: null,
-    showMoreFlag: false
+    showMoreFlag: false,
+    ratings: null
   }
-  getMovieDetail (option) {
+  getMovieDetail () {
+    const {option} = this
+    wepy.stopPullDownRefresh()
     movieDetail(option).then((data) => {
       this.detail = data
       this.$apply()
       this.hideToast()
-      console.log(data)
     })
+  }
+  getRatings () {
+    wepy.showNavigationBarLoading()
+    const {option, page} = this
+    this.page = page ? page + 1 : 1
+    ratings(option.movieId, page).then((data) => {
+      if (data.cts.length) {
+        data.cts.forEach((item, index) => {
+          data.cts[index].cd = getFormatTime(item.cd)
+        })
+        this.ratings = this.ratings ? {
+          cts: this.ratings.cts.concat(data.cts),
+          totalCount: data.totalCount
+        } : data
+        this.$apply()
+      } else {
+        this.noMore()
+      }
+      wepy.hideNavigationBarLoading()
+    })
+  }
+  onReachBottom () {
+    this.getRatings()
+  }
+  onPullDownRefresh () {
+    this.showToast()
+    this.detail = null
+    this.ratings = null
+    this.page = 1
+    this.getMovieDetail()
+    this.getRatings()
   }
   methods = {
     showMore () {
@@ -264,7 +350,8 @@ export default class MovieDetail extends wepy.page {
     }
   }
   components = {
-    well
+    well,
+    rating
   }
 }
 </script>

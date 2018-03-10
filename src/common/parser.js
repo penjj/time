@@ -1,3 +1,5 @@
+import {toTwo} from 'common/time'
+
 export function parser (str) {
   if (typeof str !== 'string') return
   if (/\d{8}/.test(str)) {
@@ -11,13 +13,14 @@ export function parser (str) {
 
 export default function parserData (data) {
   const newData = []
-  data.forEach((item) => {
+  data && data.forEach((item) => {
+    const releaseDate = parser(item.rd || `${item.rYear}${toTwo(item.rMonth)}${toTwo(item.rDay)}`)
     newData.push({
-      title: item.t,
-      type: parser(item.movieType),
-      actors: parser(item.actors),
-      releaseDate: parser(item.rd).join('-'),
-      img: item.img,
+      title: item.t || item.title,
+      type: parser(item.movieType || item.type),
+      actors: parser(item.actors) || `${item.actor1},${item.actor2}`,
+      releaseDate: Array.isArray(releaseDate) && releaseDate.join('-'),
+      img: item.img || item.image,
       wantedCount: item.wantedCount,
       is3D: item.is3D,
       isIMAX: item.isIMAX,

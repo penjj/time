@@ -16,8 +16,8 @@
     interval="5000"
   >
     <block class="box" wx:for="{{imgArr}}" wx:key="index">
-      <swiper-item class="item">
-        <image class="img" src="{{item.img}}"></image>
+      <swiper-item class="item" data-movieId="{{item.id}}" @tap="showMovieDetail">
+        <image class="img" src="{{item.img || item.image}}"></image>
       </swiper-item>
     </block>
   </swiper>
@@ -25,6 +25,7 @@
 
 <script>
 import wepy from 'wepy'
+
 export default class WSlider extends wepy.component {
   onLoad () {
   }
@@ -32,6 +33,11 @@ export default class WSlider extends wepy.component {
     imgArr: {
       type: Array,
       default: []
+    }
+  }
+  methods = {
+    showMovieDetail (e) {
+      this.$emit('showMovieDetail', e.currentTarget.dataset.movieid)
     }
   }
   watch = {

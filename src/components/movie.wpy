@@ -52,7 +52,7 @@
 </style>
 
 <template>
-  <view class="movie" hover-class="hover" movieId="{{movie.movieId}}" @tap="showMovieDetail">
+  <view class="movie" hover-class="hover" @tap="showMovieDetail">
     <view class="movie-img">
       <image class="img" src="{{movie.img}}"></image>
     </view>

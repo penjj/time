@@ -60,8 +60,8 @@
   <view class="slider">
     <wslider wx:if="{{sliderImg}}" :imgArr.sync="sliderImg"></wslider>
   </view>
-  <view class="movie" wx:if="{{hot}}">
-    <repeat for="{{hot}}" key="index" index="index" item="item">
+  <view class="movie" wx:if="{{movies}}">
+    <repeat for="{{movies}}" key="index" index="index" item="item">
       <movie :movie.sync="item"></movie>
     </repeat>
   </view>
@@ -70,6 +70,7 @@
 <script>
   import wepy from 'wepy'
   import hot from 'api/hot'
+  import movieComingNew from 'api/movie-coming-new'
   import wslider from 'components/w-slider'
   import movie from 'components/movie'
   import parserData from 'common/parser'
@@ -80,11 +81,8 @@
       navigationBarTitleText: '电影资讯'
     }
     onLoad () {
-      wepy.navigateTo({
-        url: `./movie-detail?locationId=${this.$parent.globalData.location}&movieId=${218085}`
-      })
       this.showToast()
-      this.getHot(this.$parent.globalData.location)
+      this.getMovies()
     }
     mixins = [
       toast
@@ -93,39 +91,49 @@
       wslider,
       movie
     }
-    getHot (id) {
-      hot(id).then((data) => {
-        this.hot = parserData(data.ms)
+    getMovies () {
+      wepy.showNavigationBarLoading()
+      const fn = this.active ? hot : movieComingNew
+      fn(290).then((data) => {
+        this.movies = parserData(data.ms)
         this.getSliderImg(data.ms)
         this.$apply()
-        console.log(this.hot)
-        // wepy.navigateTo({
-        //   url: `./movie-detail?locationId=${this.$parent.globalData.location}&movieId=${218085}`
-        // })
         this.hideToast()
+        wepy.stopPullDownRefresh()
+        wepy.hideNavigationBarLoading()
       })
     }
     getSliderImg (data) {
       this.sliderImg = data.slice(0, 10)
       this.$apply()
     }
+    onPullDownRefresh () {
+      this.showToast()
+      this.sliderImg = null
+      this.active = true
+      this.$apply()
+      this.getMovies()
+    }
+    onReachBottom () {
+      this.noMore()
+    }
     events = {
       'showMovieDetail': (id) => {
         wepy.navigateTo({
-          url: `./movie-detail?locationId=${this.$parent.globalData.location}&movieId=${id}`
+          url: `./movie-detail?locationId=${290}&movieId=${id}`
         })
       }
     }
-    computed = {
-    }
     data = {
-      hot: null,
+      movies: null,
       sliderImg: null,
       active: true
     }
     methods = {
       toggleType (flag) {
         this.active = flag
+        this.showToast()
+        this.getMovies()
       }
     }
   }

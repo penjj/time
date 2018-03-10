@@ -6,29 +6,15 @@ export default class extends wepy.app {
   config = {
     pages: [
       'pages/index',
-      'pages/movie-detail',
-      'pages/user'
+      'pages/movie-detail'
     ],
     window: {
-      backgroundTextStyle: 'light',
+      backgroundTextStyle: 'dark',
       navigationBarBackgroundColor: '#009687',
       navigationBarTitleText: 'WeChat',
-      navigationBarTextStyle: 'white'
-    },
-    tabBar: {
-      color: '#ddd',
-      selectedColor: 'white',
-      backgroundColor: '#009687',
-      list: [
-        {
-          pagePath: 'pages/index',
-          text: '电影'
-        },
-        {
-          pagePath: 'pages/user',
-          text: '我的'
-        }
-      ]
+      navigationBarTextStyle: 'white',
+      enablePullDownRefresh: true
+
     }
   }
   globalData = {
