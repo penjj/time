@@ -1,14 +1,11 @@
 import wepy from 'wepy'
 
-const loading = {
-}
-
 export default class testMixin extends wepy.mixin {
-  onLoad () {
+  onLoad () {  // onLoad生命周期
     this.showToast()
   }
-  noMore () {
-    wepy.showToast({
+  noMore () {  // 普通方法直接定义到class的静态方法
+    wepy.showToast({  // wepy.showToast 等同于 wx.showToast
       title: '没有更多了...',
       icon: 'none',
       duration: 1500

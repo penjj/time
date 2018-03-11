@@ -15,7 +15,7 @@
     autoplay="true"
     interval="5000"
   >
-    <block class="box" wx:for="{{imgArr}}" wx:key="index">
+    <block wx:for="{{imgArr}}" wx:key="index">
       <swiper-item class="item" data-movieId="{{item.id}}" @tap="showMovieDetail">
         <image class="img" src="{{item.img || item.image}}"></image>
       </swiper-item>
@@ -38,10 +38,6 @@ export default class WSlider extends wepy.component {
   methods = {
     showMovieDetail (e) {
       this.$emit('showMovieDetail', e.currentTarget.dataset.movieid)
-    }
-  }
-  watch = {
-    $parent (newData, oldData) {
     }
   }
 }

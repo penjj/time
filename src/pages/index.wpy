@@ -77,17 +77,17 @@
   import toast from 'mixins/toast'
 
   export default class Index extends wepy.page {
-    config = {
+    config = {  // 页面配置
       navigationBarTitleText: '电影资讯'
     }
     onLoad () {
       this.showToast()
       this.getMovies()
     }
-    mixins = [
+    mixins = [  // 注册混合组件，注意mixins是一个数组
       toast
     ]
-    components = {
+    components = { // 模块
       wslider,
       movie
     }
@@ -107,17 +107,17 @@
       this.sliderImg = data.slice(0, 10)
       this.$apply()
     }
-    onPullDownRefresh () {
+    onPullDownRefresh () {  // 顶部下拉刷新
       this.showToast()
       this.sliderImg = null
       this.active = true
       this.$apply()
       this.getMovies()
     }
-    onReachBottom () {
+    onReachBottom () { // 底部下拉加载
       this.noMore()
     }
-    events = {
+    events = {  // 与子组件的交互，都要写到events里面
       'showMovieDetail': (id) => {
         wepy.navigateTo({
           url: `./movie-detail?locationId=${290}&movieId=${id}`
